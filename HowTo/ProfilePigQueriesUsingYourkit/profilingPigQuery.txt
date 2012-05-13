@@ -1,0 +1,44 @@
+Profiling Pig query in Hadoop Cluster using Yourkit Profiler
+----------------------------------------------------------------------------------------------------------------------------
+Note: License is required to view gui but there is a 15 day trial version. Also, the license is free for pig contributors.
+Source(Refer for more info): https://cwiki.apache.org/confluence/display/PIG/HowToProfile
+This document was created by Thejas to help me profile a pig query
+----------------------------------------------------------------------------------------------------------------------------
+1.	On each machine create a yourkit directory (atleast the one executing mapred-daemon .i.e. where you executed ./start-mapred.sh)
+    Make sure that the path is same in each machine)
+	
+	mkdir Yourkit
+
+2.	Change to YourKit directory	 
+	
+	cd Yourkit
+
+3.	Download Youtkit 
+   
+    wget http://www.yourkit.com/download/yjp-11.0.2-linux.tar.bz2
+   
+4.	Unzip YourKit
+
+	tar xvjf yjp-11.0.2-linux.tar.bz2
+
+5.	Run pig query with the following params. Note that libyjpagent.so file depends in the the type of kernel (32 bits or 64 bits). 
+	Yourkit includes it for both versions. Command mentioned below is a single command.
+	
+	java -Dmapred.max.split.size=10000000 
+	-Dmapred.task.timeout=60000000 
+	-Dmapred.task.profile.maps=0-0 
+	-Dmapred.task.profile.reduces=0-0
+	-Dmapred.task.profile=true 
+	-Dmapred.task.profile.params=-agentpath:/Yourkit/yjp-11.0.2/bin/linux-x86-xx/libyjpagent.so=dir=/tmp/snapshots,
+	filters=/dev/null,
+	tracing,
+	disablej2ee 
+	-cp pig-0.9.0-core.jar:Hadoop/hadoop-0.xx.x/conf org.apache.pig.Main example.pig
+
+6.	After running the pig query, snap shot files are generated in /tmp/snapshots directory. 
+	You can change this in the command mentioned in step 5 .i.e. dir=/tmp/snapshots
+
+7.	Open the snapshot file viewer. It will ask for the license. copy paste the license (trial version or actual)
+	./ YourKit/yjp-11.0.2/bin/yjp.sh
+
+8.	Open the snapshot files using GUI
