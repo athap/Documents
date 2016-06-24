@@ -11,6 +11,7 @@ set expandtab
 
 let mapleader = ","
 nmap <leader>nt :NERDTree<cr>
+nmap =j :%!python -m json.tool<CR>
 :nnoremap <leader>gi :GoImport<space>
 
 au FileType go nmap <leader>r <Plug>(go-run)
